@@ -1,0 +1,22 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="uz.pdp.online"/>
+
+    <!-- Item Bean -->
+    <bean id="item" class="uz.pdp.online.Item"/>
+
+    <!-- Store Bean with Constructor Injection using 'c' namespace -->
+    <bean id="storeConstructor" class="uz.pdp.online.Store" c:_0-ref="item"/>
+
+    <!-- Store Bean with Setter Injection using 'p' namespace -->
+    <bean id="storeSetter" class="uz.pdp.online.Store" p:item-ref="item"/>
+
+</beans>
