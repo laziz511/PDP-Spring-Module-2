@@ -25,3 +25,13 @@ f
 6src/main/java/uz/pdp/online/DispatcherInitializer.java,2\0\20e2dcf30a22130ff0912d12e67ca227ca32086c
 d
 4src/main/java/uz/pdp/online/WebMvcConfiguration.java,5\c\5c300e247a9232fb4f38b5a4c219cfcd2cfaf167
+k
+;src/main/java/uz/pdp/online/config/WebMvcConfiguration.java,2\3\23984afa3c42d883fc64fac5b7267cea9da48052
+m
+=src/main/java/uz/pdp/online/config/DispatcherInitializer.java,b\f\bfd3394906f14a463815880e85d5ed1ea6da1e2d
+[
++src/main/java/uz/pdp/online/controller.java,3\1\31b9158e3654858b6da7c826756df4186e7a9915
+[
++src/main/java/uz/pdp/online/model/Todo.java,f\a\fad53ce74c3f8556772a663c997046191e6f15b4
+j
+:src/main/java/uz/pdp/online/controller/TodoController.java,6\6\66f62bc9e1114334aa7fea5013eb9877ed49975a

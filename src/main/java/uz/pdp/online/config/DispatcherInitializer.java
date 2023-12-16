@@ -1,4 +1,4 @@
-package uz.pdp.online;
+package uz.pdp.online.config;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
