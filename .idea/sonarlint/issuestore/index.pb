@@ -1,18 +1,10 @@
 
 7
 pom.xml,4\4\442292b8a7efeabbe4cc176709b833b1792140ec
-`
-0src/main/java/uz/pdp/online/xml_config/City.java,7\e\7e8d340e5af7192148b45454e178bb16494f5c38
-a
-1src/main/java/uz/pdp/online/java_config/City.java,3\5\351f5f85e2adea9a8ff22a00fa72dda1af9690c9
-g
-7src/main/java/uz/pdp/online/java_config/CityConfig.java,2\7\279121359324ae3527cd4bbf7bd98d51c4a8489d
 a
 1src/main/java/uz/pdp/online/java_config/Main.java,0\d\0d5e94663c1fe42df82a55c823b36ccb8284ff2d
 `
 0src/main/java/uz/pdp/online/xml_config/Main.java,b\c\bcc79f6135d2a206c6babf104631c306760554f0
-Z
-*src/main/java/uz/pdp/online/Transform.java,c\a\ca7d69ae80a5e208cf03132bb096430d6f982f9c
 e
 5src/main/java/uz/pdp/online/xml_config/Transform.java,a\6\a6a06988f460bc1aed21d2d637dbcac8f51eef14
 b
@@ -23,3 +15,13 @@ f
 6src/main/java/uz/pdp/online/java_config/Transform.java,3\f\3ff62a2e14faff5e67d8a0446cfb4248232be892
 n
 >src/main/java/uz/pdp/online/java_config/ApplicationConfig.java,f\b\fb22d238907924cbd917d643ad6ee48f75c1780e
+U
+%src/main/java/uz/pdp/online/Todo.java,4\9\495fff124bdd0641aeecd700e630cff14463f3d9
+_
+/src/main/java/uz/pdp/online/TodoController.java,2\4\240f38c080aa31ca4b404227cce8992a4a172df8
+Z
+*src/main/java/uz/pdp/online/AppConfig.java,4\3\43a4dc35cccc77dc6d199208816d0ee9ec21a1b6
+f
+6src/main/java/uz/pdp/online/DispatcherInitializer.java,2\0\20e2dcf30a22130ff0912d12e67ca227ca32086c
+d
+4src/main/java/uz/pdp/online/WebMvcConfiguration.java,5\c\5c300e247a9232fb4f38b5a4c219cfcd2cfaf167
