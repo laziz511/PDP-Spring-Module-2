@@ -15,12 +15,12 @@
           p:dataSource-ref="dataSource"
     />
 
-    <bean id="todoRepository" class="uz.pdp.online.repository.TodoRepository"
-          c:jdbcTemplate-ref="jdbcTemplate"
-    />
-
     <bean id="namedParameterJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate"
           c:dataSource-ref="dataSource"
+    />
+
+    <bean id="todoRepository" class="uz.pdp.online.repository.TodoRepository"
+          c:jdbcTemplate-ref="jdbcTemplate"
     />
 
 </beans>

@@ -1,19 +1,36 @@
 package uz.pdp.online.repository;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import uz.pdp.online.mapper.TodoRowMapper;
 import uz.pdp.online.model.Todo;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class TodoRepository {
 
     private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert simpleJdbcInsert;
 
     public TodoRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
+    }
+
+    public void save(Todo todo) {
+        simpleJdbcInsert.withTableName("todos").usingGeneratedKeyColumns("id");
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("title", todo.getTitle());
+        parameters.put("priority", todo.getPriority());
+        parameters.put("created_at", todo.getCreatedAt());
+
+        Number newId = simpleJdbcInsert.executeAndReturnKey(parameters);
+        todo.setId(newId.intValue());
     }
 
     public List<Todo> findAll() {
@@ -24,11 +41,6 @@ public class TodoRepository {
     public Todo findById(int id) {
         String sql = "SELECT * FROM todos WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, new TodoRowMapper());
-    }
-
-    public void save(Todo todo) {
-        String sql = "INSERT INTO todos (title, priority, created_at) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql, todo.getTitle(), todo.getPriority(), todo.getCreatedAt());
     }
 
     public void update(Todo todo) {
