@@ -4,11 +4,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class Main {
     public static void main(String[] args) {
-        ClassPathXmlApplicationContext xmlApplicationContext = new ClassPathXmlApplicationContext("ioc-config.xml");
-        City cityBeanFromXml = xmlApplicationContext.getBean(City.class);
-
-        System.out.println(cityBeanFromXml);
-
-        xmlApplicationContext.close();
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("ioc-config.xml");
+        Transform transform = context.getBean(Transform.class);
+        transform.start();
     }
 }

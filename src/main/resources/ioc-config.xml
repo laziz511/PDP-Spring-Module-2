@@ -1,17 +1,23 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans.xsd
-           http://www.springframework.org/schema/util
-           https://www.springframework.org/schema/util/spring-util.xsd">
+       http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <!-- City Bean with Prototype Scope -->
-    <bean id="city" class="uz.pdp.online.xml_config.City" scope="prototype" p:name="#{cityProperties.name}"
-          p:numberOfPeople="#{cityProperties.numberOfPeople}" p:size="#{cityProperties.size}"/>
 
-    <!-- City Properties -->
-    <util:properties id="cityProperties" location="classpath:city.properties"/>
+    <bean id="transform" class="uz.pdp.online.xml_config.Transform"/>
+    <bean id="logger" class="uz.pdp.online.xml_config.Logger"/>
+
+    <aop:config>
+        <aop:aspect ref="logger">
+            <aop:before pointcut="execution(* uz.pdp.online.xml_config.Transform.start(..))"
+                        method="start"/>
+            <aop:after pointcut="execution(* uz.pdp.online.xml_config.Transform.start(..))"
+                       method="end"/>
+            <aop:after-returning pointcut="execution(* uz.pdp.online.xml_config.Transform.start(..))"
+                                 method="success"/>
+            <aop:after-throwing pointcut="execution(* uz.pdp.online.xml_config.Transform.start(..))"
+                                method="exception"/>
+        </aop:aspect>
+    </aop:config>
 
 </beans>

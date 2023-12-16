@@ -11,3 +11,15 @@ a
 1src/main/java/uz/pdp/online/java_config/Main.java,0\d\0d5e94663c1fe42df82a55c823b36ccb8284ff2d
 `
 0src/main/java/uz/pdp/online/xml_config/Main.java,b\c\bcc79f6135d2a206c6babf104631c306760554f0
+Z
+*src/main/java/uz/pdp/online/Transform.java,c\a\ca7d69ae80a5e208cf03132bb096430d6f982f9c
+e
+5src/main/java/uz/pdp/online/xml_config/Transform.java,a\6\a6a06988f460bc1aed21d2d637dbcac8f51eef14
+b
+2src/main/java/uz/pdp/online/xml_config/Logger.java,1\0\1041bdbbed2db65dcefd464a3173009984378eb4
+c
+3src/main/java/uz/pdp/online/java_config/Logger.java,5\2\52de25683279b86a70f2054a138e906a54d04b4d
+f
+6src/main/java/uz/pdp/online/java_config/Transform.java,3\f\3ff62a2e14faff5e67d8a0446cfb4248232be892
+n
+>src/main/java/uz/pdp/online/java_config/ApplicationConfig.java,f\b\fb22d238907924cbd917d643ad6ee48f75c1780e

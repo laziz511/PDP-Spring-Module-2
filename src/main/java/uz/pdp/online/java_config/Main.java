@@ -4,11 +4,9 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 public class Main {
     public static void main(String[] args) {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(CityConfig.class);
-        City cityBean = context.getBean(City.class);
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+        Transform transform = context.getBean(Transform.class);
+        transform.start();
 
-        System.out.println(cityBean);
-
-        context.close();
     }
 }
