@@ -1,67 +1,87 @@
 package uz.pdp.online.repository;
 
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 import uz.pdp.online.mapper.TodoRowMapper;
 import uz.pdp.online.model.Todo;
 
-import java.util.HashMap;
+import java.sql.Types;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Repository
 public class TodoRepository {
 
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final SimpleJdbcCall findAllCall;
+    private final SimpleJdbcCall findByIdCall;
+    private final SimpleJdbcCall saveCall;
+    private final SimpleJdbcCall updateCall;
+    private final SimpleJdbcCall deleteCall;
 
-    public TodoRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
-    }
+    public TodoRepository(JdbcTemplate jdbcTemplate) {
+        this.findAllCall = new SimpleJdbcCall(jdbcTemplate)
+                .withProcedureName("find_all_todos")
+                .returningResultSet("todos", new TodoRowMapper());
 
-    public void save(Todo todo) {
-        String sql = "INSERT INTO todos (title, priority, created_at) VALUES (:title, :priority, :created_at)";
+        this.findByIdCall = new SimpleJdbcCall(jdbcTemplate)
+                .withProcedureName("find_todo_by_id")
+                .declareParameters(new SqlParameter("todo_id", Types.INTEGER))
+                .returningResultSet("todo", new TodoRowMapper());
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("title", todo.getTitle());
-        parameters.put("priority", todo.getPriority());
-        parameters.put("created_at", todo.getCreatedAt());
+        this.saveCall = new SimpleJdbcCall(jdbcTemplate)
+                .withProcedureName("create_todo")
+                .declareParameters(new SqlParameter("title", Types.VARCHAR),
+                        new SqlParameter("priority", Types.VARCHAR),
+                        new SqlParameter("created_at", Types.TIMESTAMP),
+                        new SqlParameter("id", Types.INTEGER));
 
-        Number newId = namedParameterJdbcTemplate.queryForObject(sql, parameters, Integer.class);
-        todo.setId(Objects.requireNonNull(newId).intValue());
+        this.updateCall = new SimpleJdbcCall(jdbcTemplate)
+                .withProcedureName("update_todo")
+                .declareParameters(new SqlParameter("todo_id", Types.INTEGER),
+                        new SqlParameter("title", Types.VARCHAR),
+                        new SqlParameter("priority", Types.VARCHAR));
+
+        this.deleteCall = new SimpleJdbcCall(jdbcTemplate)
+                .withProcedureName("delete_todo")
+                .declareParameters(new SqlParameter("todo_id", Types.INTEGER));
     }
 
     public List<Todo> findAll() {
-        String sql = "SELECT * FROM todos ORDER BY created_at DESC";
-        return namedParameterJdbcTemplate.query(sql, new TodoRowMapper());
+        Map<String, Object> result = findAllCall.execute();
+        return (List<Todo>) result.get("todos");
     }
 
     public Todo findById(int id) {
-        String sql = "SELECT * FROM todos WHERE id = :id";
+        Map<String, Object> inParams = Map.of("todo_id", id);
+        Map<String, Object> result = findByIdCall.execute(inParams);
+        List<Todo> todos = (List<Todo>) result.get("todo");
+        return todos.isEmpty() ? null : todos.get(0);
+    }
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("id", id);
+    public void save(Todo todo) {
+        Map<String, Object> inParams = Map.of(
+                "title", todo.getTitle(),
+                "priority", todo.getPriority(),
+                "created_at", todo.getCreatedAt(),
+                "id", null);
 
-        return namedParameterJdbcTemplate.queryForObject(sql, parameters, new TodoRowMapper());
+        Map<String, Object> result = saveCall.execute(inParams);
+        todo.setId((Integer) result.get("id"));
     }
 
     public void update(Todo todo) {
-        String sql = "UPDATE todos SET title = :title, priority = :priority WHERE id = :id";
+        Map<String, Object> inParams = Map.of(
+                "todo_id", todo.getId(),
+                "title", todo.getTitle(),
+                "priority", todo.getPriority());
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("title", todo.getTitle());
-        parameters.put("priority", todo.getPriority());
-        parameters.put("id", todo.getId());
-
-        namedParameterJdbcTemplate.update(sql, parameters);
+        updateCall.execute(inParams);
     }
 
     public void delete(int id) {
-        String sql = "DELETE FROM todos WHERE id = :id";
-
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("id", id);
-
-        namedParameterJdbcTemplate.update(sql, parameters);
+        Map<String, Object> inParams = Map.of("todo_id", id);
+        deleteCall.execute(inParams);
     }
 }

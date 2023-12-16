@@ -13,3 +13,5 @@ j
 :src/main/java/uz/pdp/online/repository/TodoRepository.java,8\8\881ef44610ef5d55122f14959f32978f7f0c4a64
 e
 5src/main/java/uz/pdp/online/mapper/TodoRowMapper.java,3\1\3162d72d964ee963a7f4b1440b88ffc624575a4d
+f
+6src/main/java/uz/pdp/online/config/TodoRepository.java,4\e\4e53bb0f58ade6a6eb18f23110ec3274c9a260c1

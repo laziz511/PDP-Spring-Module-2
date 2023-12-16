@@ -20,7 +20,7 @@
     />
 
     <bean id="todoRepository" class="uz.pdp.online.repository.TodoRepository"
-          c:namedParameterJdbcTemplate-ref="namedParameterJdbcTemplate"
+          c:jdbcTemplate-ref="jdbcTemplate"
     />
 
 </beans>
