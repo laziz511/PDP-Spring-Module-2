@@ -99,3 +99,15 @@ w
 G.idea/sonarlint/issuestore/f/b/fbcb94728fea43e0266a1993394ae79a61edc0c7,0\6\063eda5e0610f075fac95db4870431819399af8e
 
 Q.idea/sonarlint/securityhotspotstore/d/1/d1445d71b5e3a544039a2af1ab77b4bc11c4a8d8,0\4\0425ac4103f2bb6ce5963e818b42e07a31a8675c
+[
++src/main/java/uz/pdp/online/model/User.java,3\8\38d24c06a495e812e6762eece76c5a6dd3e9bf1a
+j
+:src/main/java/uz/pdp/online/repository/UserRepository.java,d\7\d7d5633cddbb990878550a9344047c1de7d9b39e
+e
+5src/main/java/uz/pdp/online/mapper/UserRowMapper.java,9\1\91a5d7ab839369f1946c549c2f76da5eee80463a
+_
+/src/main/java/uz/pdp/online/model/AuthUser.java,7\a\7a112680c71528ebb33baa75b7b25e2937596a8c
+n
+>src/main/java/uz/pdp/online/repository/AuthUserRepository.java,f\f\ffc138421e503ebdd3adc712cb0956c803a40547
+i
+9src/main/java/uz/pdp/online/mapper/AuthUserRowMapper.java,e\e\ee7ac2d3608fe589355775d05b168242bd96003d

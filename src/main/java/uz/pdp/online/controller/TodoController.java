@@ -13,8 +13,8 @@ import java.util.List;
 @Controller
 @RequestMapping("/todos")
 public class TodoController {
-
     private final TodoRepository todoRepository;
+    private static final String REDIRECT_TO_HOME_PAGE = "redirect:/todos/show";
 
     @Autowired
     public TodoController(TodoRepository todoRepository) {
@@ -38,7 +38,7 @@ public class TodoController {
         LocalDateTime createdAt = LocalDateTime.now();
         Todo newTodo = new Todo(null, title, priority, createdAt);
         todoRepository.save(newTodo);
-        return "redirect:/todos/show";
+        return REDIRECT_TO_HOME_PAGE;
     }
 
     @GetMapping("/delete/{id}")
@@ -51,7 +51,7 @@ public class TodoController {
     @PostMapping("/delete")
     public String deleteTodo(@RequestParam int id) {
         todoRepository.delete(id);
-        return "redirect:/todos/show";
+        return REDIRECT_TO_HOME_PAGE;
     }
 
     @GetMapping("/update/{id}")
@@ -69,6 +69,6 @@ public class TodoController {
             todoToUpdate.setPriority(priority);
             todoRepository.update(todoToUpdate);
         }
-        return "redirect:/todos/show";
+        return REDIRECT_TO_HOME_PAGE;
     }
 }

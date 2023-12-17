@@ -28,8 +28,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     private final Environment env;
 
     @Autowired
-    public WebMvcConfiguration(ApplicationContext applicationContext,
-                               Environment env) {
+    public WebMvcConfiguration(ApplicationContext applicationContext, Environment env) {
         this.applicationContext = applicationContext;
         this.env = env;
     }
@@ -64,12 +63,9 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/css/*")
-                .addResourceLocations("classpath:/static/css/");
-        registry.addResourceHandler("/js/*")
-                .addResourceLocations("classpath:/static/js/");
-        registry.addResourceHandler("/static/*")
-                .addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/css/*").addResourceLocations("classpath:/static/css/");
+        registry.addResourceHandler("/js/*").addResourceLocations("classpath:/static/js/");
+        registry.addResourceHandler("/static/*").addResourceLocations("classpath:/static/");
     }
 
 
