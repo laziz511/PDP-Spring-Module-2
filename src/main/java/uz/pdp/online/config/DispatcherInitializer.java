@@ -1,5 +1,6 @@
 package uz.pdp.online.config;
 
+
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class DispatcherInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
