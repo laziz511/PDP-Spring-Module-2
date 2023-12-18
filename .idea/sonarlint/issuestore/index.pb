@@ -103,3 +103,6 @@ U
 %src/main/java/uz/pdp/online/Main.java,5\5\5570674c46645e57ff9d3dbd3200408578946857
 p
 @src/main/java/uz/pdp/online/exception/KeyRetrievalException.java,d\6\d6fc40f1a87073df358a51d4da73f592a843c80b
+:
+
+.gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
