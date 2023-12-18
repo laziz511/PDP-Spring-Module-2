@@ -3,6 +3,7 @@ package uz.pdp.online.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import uz.pdp.online.dto.UserRegisterDTO;
@@ -23,6 +24,11 @@ public class AuthController {
         modelAndView.setViewName("auth/login");
         modelAndView.addObject("errorMessage", error);
         return modelAndView;
+    }
+
+    @GetMapping("/logout")
+    public String logoutPage(Model model) {
+        return "auth/logout";
     }
 
     @GetMapping("/register")

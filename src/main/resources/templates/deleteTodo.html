@@ -18,6 +18,7 @@
                 <div class="card-body">
 
                     <form action="/todos/delete" method="post" class="needs-validation" novalidate>
+                        <input type="hidden" name="_csrf" th:value="${_csrf.getToken()}">
                         <input type="hidden" name="id" th:value="${todoToDelete.id}">
 
                         <p class="lead">Are you sure you want to delete the following Todo?</p>

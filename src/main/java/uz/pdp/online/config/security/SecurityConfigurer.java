@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @RequiredArgsConstructor
@@ -21,6 +22,7 @@ public class SecurityConfigurer {
 
     private final CustomAuthenticationFailureHandler authenticationFailureHandler;
 
+    private final CustomUserDetailsService userDetailsService;
     protected static final String[] WHITE_LIST = {
             "/auth/login",
             "/auth/register"
@@ -36,7 +38,6 @@ public class SecurityConfigurer {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable();
 
         http.authorizeHttpRequests()
                 .requestMatchers(WHITE_LIST).permitAll()
@@ -50,6 +51,19 @@ public class SecurityConfigurer {
                 .passwordParameter("pswd")
                 .defaultSuccessUrl("/todos/show", false)
                 .failureHandler(authenticationFailureHandler);
+
+        http.logout()
+                .logoutUrl("/auth/logout")
+                .deleteCookies("JSESSIONID")
+                .clearAuthentication(true)
+                .logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout", "POST"));
+
+        http.rememberMe()
+                .rememberMeParameter("rememberMe")
+                .rememberMeCookieName("rem-me")
+                .tokenValiditySeconds(24 * 60 * 60)
+                .key("secret_key")
+                .userDetailsService(userDetailsService);
 
         return http.build();
     }

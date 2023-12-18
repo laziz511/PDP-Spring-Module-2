@@ -14,4 +14,5 @@ public class Todo {
     private String title;
     private String priority;
     private LocalDateTime createdAt;
+    private Long userId;
 }

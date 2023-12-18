@@ -15,7 +15,8 @@ public class TodoRowMapper implements RowMapper<Todo> {
         String title = resultSet.getString("title");
         String priority = resultSet.getString("priority");
         LocalDateTime createdAt = resultSet.getTimestamp("created_at").toLocalDateTime();
+        Long userId = resultSet.getLong("user_id");
 
-        return new Todo(id, title, priority, createdAt);
+        return new Todo(id, title, priority, createdAt, userId);
     }
 }

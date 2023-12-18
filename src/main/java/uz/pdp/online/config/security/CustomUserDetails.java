@@ -14,6 +14,10 @@ public record CustomUserDetails(AuthUser authUser) implements UserDetails {
         return new HashSet<>();
     }
 
+    public AuthUser getAuthUser() {
+        return authUser;
+    }
+
     @Override
     public String getPassword() {
         return authUser.getPassword();
