@@ -7,15 +7,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
+import static uz.pdp.online.repository.ColumnConstants.*;
+
 public class TodoRowMapper implements RowMapper<Todo> {
 
     @Override
     public Todo mapRow(ResultSet resultSet, int i) throws SQLException {
-        int id = resultSet.getInt("id");
-        String title = resultSet.getString("title");
-        String priority = resultSet.getString("priority");
-        LocalDateTime createdAt = resultSet.getTimestamp("created_at").toLocalDateTime();
-        Long userId = resultSet.getLong("user_id");
+        int id = resultSet.getInt(ID);
+        String title = resultSet.getString(TITLE);
+        String priority = resultSet.getString(PRIORITY);
+        LocalDateTime createdAt = resultSet.getTimestamp(CREATED_AT).toLocalDateTime();
+        Long userId = resultSet.getLong(USER_ID);
 
         return new Todo(id, title, priority, createdAt, userId);
     }

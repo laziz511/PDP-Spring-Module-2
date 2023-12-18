@@ -1,5 +1,6 @@
 package uz.pdp.online.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -7,21 +8,19 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.online.config.security.CustomUserDetails;
 import uz.pdp.online.model.Todo;
+import uz.pdp.online.repository.AuthRoleRepository;
 import uz.pdp.online.repository.TodoRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/todos")
 public class TodoController {
+
     private final TodoRepository todoRepository;
     private static final String REDIRECT_TO_HOME_PAGE = "redirect:/todos/show";
-
-    @Autowired
-    public TodoController(TodoRepository todoRepository) {
-        this.todoRepository = todoRepository;
-    }
 
     @GetMapping("/show")
     public String showTodos(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
@@ -37,8 +36,7 @@ public class TodoController {
     }
 
     @PostMapping("/add")
-    public String addTodo(@RequestParam String title, @RequestParam String priority,
-                          @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String addTodo(@RequestParam String title, @RequestParam String priority, @AuthenticationPrincipal CustomUserDetails userDetails) {
         LocalDateTime createdAt = LocalDateTime.now();
         Long userId = userDetails.getAuthUser().getId();
         Todo newTodo = new Todo(null, title, priority, createdAt, userId);
@@ -47,8 +45,7 @@ public class TodoController {
     }
 
     @GetMapping("/delete/{id}")
-    public String showDeleteTodoForm(@PathVariable Long id, Model model,
-                                     @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String showDeleteTodoForm(@PathVariable Long id, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long userId = userDetails.getAuthUser().getId();
         Todo todoToDelete = todoRepository.findByIdAndUserId(id, userId);
         model.addAttribute("todoToDelete", todoToDelete);
@@ -56,16 +53,14 @@ public class TodoController {
     }
 
     @PostMapping("/delete")
-    public String deleteTodo(@RequestParam Long id,
-                             @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String deleteTodo(@RequestParam Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long userId = userDetails.getAuthUser().getId();
         todoRepository.delete(id, userId);
         return REDIRECT_TO_HOME_PAGE;
     }
 
     @GetMapping("/update/{id}")
-    public String showUpdateTodoForm(@PathVariable Long id, Model model,
-                                     @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String showUpdateTodoForm(@PathVariable Long id, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long userId = userDetails.getAuthUser().getId();
         Todo todoToUpdate = todoRepository.findByIdAndUserId(id, userId);
         model.addAttribute("todoToUpdate", todoToUpdate);
@@ -73,9 +68,7 @@ public class TodoController {
     }
 
     @PostMapping("/update")
-    public String processUpdateTodo(@RequestParam Long id, @RequestParam String title,
-                                    @RequestParam String priority,
-                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String updateTodo(@RequestParam Long id, @RequestParam String title, @RequestParam String priority, @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long userId = userDetails.getAuthUser().getId();
         Todo todoToUpdate = todoRepository.findByIdAndUserId(id, userId);
         if (todoToUpdate != null) {

@@ -6,14 +6,22 @@ import uz.pdp.online.model.AuthUser;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static uz.pdp.online.repository.ColumnConstants.*;
+
 public class AuthUserRowMapper implements RowMapper<AuthUser> {
 
     @Override
     public AuthUser mapRow(ResultSet resultSet, int i) throws SQLException {
-        Long id = resultSet.getLong("id");
-        String username = resultSet.getString("username");
-        String password = resultSet.getString("password");
+        Long id = resultSet.getLong(ID);
+        String username = resultSet.getString(USERNAME);
+        String password = resultSet.getString(PASSWORD);
+        boolean blocked = resultSet.getBoolean(BLOCKED);
 
-        return new AuthUser(id, username, password);
+        return AuthUser.builder()
+                .id(id)
+                .username(username)
+                .password(password)
+                .blocked(blocked)
+                .build();
     }
 }

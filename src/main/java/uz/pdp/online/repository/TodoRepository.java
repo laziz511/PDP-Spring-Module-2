@@ -10,63 +10,76 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static uz.pdp.online.repository.ColumnConstants.*;
+import static uz.pdp.online.repository.ColumnConstants.PRIORITY;
+
 @Repository
 @RequiredArgsConstructor
 public class TodoRepository {
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+    private static final String SAVE_SQL = """
+            INSERT INTO todos (title, priority, created_at, user_id)
+            VALUES (:title, :priority, :created_at, :user_id)
+            """;
+
+    private static final String FIND_BY_USER_ID_SQL = """
+            SELECT * FROM todos WHERE user_id = :user_id ORDER BY created_at DESC
+            """;
+
+    private static final String FIND_BY_ID_AND_USER_ID_SQL = """
+            SELECT * FROM todos WHERE id = :id AND user_id = :user_id
+            """;
+
+    private static final String UPDATE_SQL = """
+            UPDATE todos SET title = :title, priority = :priority WHERE id = :id AND user_id = :user_id
+            """;
+
+    private static final String DELETE_SQL = """
+            DELETE FROM todos WHERE id = :id AND user_id = :user_id
+            """;
+
     public void save(Todo todo) {
-        String sql = "INSERT INTO todos (title, priority, created_at, user_id) " +
-                "VALUES (:title, :priority, :created_at, :user_id)";
-
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("title", todo.getTitle());
-        parameters.put("priority", todo.getPriority());
-        parameters.put("created_at", todo.getCreatedAt());
-        parameters.put("user_id", todo.getUserId());
+        parameters.put(TITLE, todo.getTitle());
+        parameters.put(PRIORITY, todo.getPriority());
+        parameters.put(CREATED_AT, todo.getCreatedAt());
+        parameters.put(USER_ID, todo.getUserId());
 
-        namedParameterJdbcTemplate.update(sql, parameters);
+        namedParameterJdbcTemplate.update(SAVE_SQL, parameters);
     }
 
     public List<Todo> findByUserId(Long userId) {
-        String sql = "SELECT * FROM todos WHERE user_id = :user_id ORDER BY created_at DESC";
-
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("user_id", userId);
+        parameters.put(USER_ID, userId);
 
-        return namedParameterJdbcTemplate.query(sql, parameters, new TodoRowMapper());
+        return namedParameterJdbcTemplate.query(FIND_BY_USER_ID_SQL, parameters, new TodoRowMapper());
     }
 
     public Todo findByIdAndUserId(Long id, Long userId) {
-        String sql = "SELECT * FROM todos WHERE id = :id AND user_id = :user_id";
-
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("id", id);
-        parameters.put("user_id", userId);
+        parameters.put(ID, id);
+        parameters.put(USER_ID, userId);
 
-        return namedParameterJdbcTemplate.queryForObject(sql, parameters, new TodoRowMapper());
+        return namedParameterJdbcTemplate.queryForObject(FIND_BY_ID_AND_USER_ID_SQL, parameters, new TodoRowMapper());
     }
 
     public void update(Todo todo) {
-        String sql = "UPDATE todos SET title = :title, priority = :priority WHERE id = :id AND user_id = :user_id";
-
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("title", todo.getTitle());
-        parameters.put("priority", todo.getPriority());
-        parameters.put("id", todo.getId());
-        parameters.put("user_id", todo.getUserId());
+        parameters.put(TITLE, todo.getTitle());
+        parameters.put(PRIORITY, todo.getPriority());
+        parameters.put(ID, todo.getId());
+        parameters.put(USER_ID, todo.getUserId());
 
-        namedParameterJdbcTemplate.update(sql, parameters);
+        namedParameterJdbcTemplate.update(UPDATE_SQL, parameters);
     }
 
     public void delete(Long id, Long userId) {
-        String sql = "DELETE FROM todos WHERE id = :id AND user_id = :user_id";
-
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("id", id);
-        parameters.put("user_id", userId);
+        parameters.put(ID, id);
+        parameters.put(USER_ID, userId);
 
-        namedParameterJdbcTemplate.update(sql, parameters);
+        namedParameterJdbcTemplate.update(DELETE_SQL, parameters);
     }
 }
