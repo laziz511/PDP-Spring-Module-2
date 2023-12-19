@@ -3,7 +3,7 @@
 
 <head th:replace="fragments :: head(~{::title})">
     <meta charset="UTF-8">
-    <title>User List</title>
+    <title th:text="#{user_list}">User List</title>
 </head>
 
 <body class="container mt-5">
@@ -14,13 +14,13 @@
         <img th:src="${profilePhoto}" alt="Profile Photo"/>
     </div>
 
-    <a class="navbar-brand" href="#">User List</a>
+    <a class="navbar-brand" href="#" th:text="#{user_list}">User List</a>
 
     <!-- Navbar links -->
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/auth/logout}">Logout</a>
+                <a class="nav-link" th:href="@{/auth/logout}" th:text="#{logout}">Logout</a>
             </li>
         </ul>
     </div>
@@ -31,31 +31,30 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header text-center bg-dark text-white">
-                    <h2 class="mt-5 mb-4">User List</h2>
+                    <h2 class="mt-5 mb-4" th:text="#{user_list}">User List</h2>
                 </div>
                 <div class="card-body">
                     <table class="table table-bordered">
                         <thead class="thead-dark">
                         <tr>
-                            <th>ID</th>
-                            <th>Username</th>
-                            <th>Blocked</th>
-                            <th>Action</th>
+                            <th th:text="#{id}">ID</th>
+                            <th th:text="#{username}">Username</th>
+                            <th th:text="#{blocked}">Blocked</th>
+                            <th th:text="#{action}">Action</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="user : ${users}">
                             <td th:text="${user.id}"></td>
                             <td th:text="${user.username}"></td>
-                            <td th:text="${user.blocked ? 'Yes' : 'No'}"></td>
+                            <td th:text="${user.blocked ? #{yes} : #{no}}"></td>
                             <td>
                                 <form th:action="@{/auth/block/{userId}(userId=${user.id})}" method="post">
                                     <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
-                                    <button type="submit" class="btn btn-danger btn-sm">Block</button>
+                                    <button type="submit" class="btn btn-danger btn-sm" th:text="#{block}">Block</button>
                                 </form>
                             </td>
                         </tr>
-
                         </tbody>
                     </table>
                 </div>

@@ -1,40 +1,42 @@
 package uz.pdp.online.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.thymeleaf.extras.springsecurity6.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
+import java.util.Locale;
+
 @Configuration
 @ComponentScan("uz.pdp.online")
 @EnableWebMvc
 @PropertySource("classpath:application.properties")
+@RequiredArgsConstructor
 public class WebMvcConfiguration implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
     private final Environment env;
-
-    @Autowired
-    public WebMvcConfiguration(ApplicationContext applicationContext, Environment env) {
-        this.applicationContext = applicationContext;
-        this.env = env;
-    }
-
 
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
@@ -52,6 +54,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(templateResolver());
         templateEngine.addDialect(new SpringSecurityDialect());
+        templateEngine.setMessageSource(messageSource());
         return templateEngine;
     }
 
@@ -91,5 +94,26 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     @Bean
     public MultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
+    }
+
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasenames("classpath:/i18n/messages");
+        return messageSource;
+    }
+
+    @Bean
+    public LocaleResolver localeResolver() {
+        CookieLocaleResolver cookieLocaleResolver = new CookieLocaleResolver("language");
+        cookieLocaleResolver.setDefaultLocale(Locale.forLanguageTag("uz"));
+        return cookieLocaleResolver;
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
+        interceptor.setParamName("lang");
+        registry.addInterceptor(interceptor);
     }
 }

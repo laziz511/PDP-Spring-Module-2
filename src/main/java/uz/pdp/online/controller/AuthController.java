@@ -42,11 +42,14 @@ public class AuthController {
 
     @GetMapping("/login")
     public ModelAndView loginPage(@RequestParam(required = false) String error) {
+
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("auth/login");
         modelAndView.addObject("errorMessage", error);
+
         return modelAndView;
     }
+
 
     @GetMapping("/logout")
     public String logoutPage(Model model) {
@@ -64,13 +67,7 @@ public class AuthController {
 
         String photoPath = savePhoto(photo);
 
-        AuthUser authUser = AuthUser.builder()
-                .username(dto.username())
-                .password(passwordEncoder.encode(dto.password()))
-                .profilePhotoPath(rootPath.resolve(photoPath).toString())
-                .roles(Collections.emptyList())
-                .blocked(false)
-                .build();
+        AuthUser authUser = AuthUser.builder().username(dto.username()).password(passwordEncoder.encode(dto.password())).profilePhotoPath(rootPath.resolve(photoPath).toString()).roles(Collections.emptyList()).blocked(false).build();
 
         AuthUser savedUser = authUserRepository.save(authUser);
 
@@ -93,8 +90,7 @@ public class AuthController {
 
     @GetMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
-    public String showAllUsers(Model model,
-                               @AuthenticationPrincipal CustomUserDetails adminDetails) {
+    public String showAllUsers(Model model, @AuthenticationPrincipal CustomUserDetails adminDetails) {
         List<AuthUser> users = authUserRepository.findAll();
         model.addAttribute("users", users);
 
@@ -103,8 +99,7 @@ public class AuthController {
 
     @PostMapping("/block/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public String blockUser(@PathVariable Long userId,
-                            @AuthenticationPrincipal CustomUserDetails adminDetails) {
+    public String blockUser(@PathVariable Long userId, @AuthenticationPrincipal CustomUserDetails adminDetails) {
         Optional<AuthUser> userToBlock = authUserRepository.findById(userId);
         AuthUser user = userToBlock.orElseThrow(() -> new RuntimeException("USER NOT FOUND"));
 

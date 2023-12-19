@@ -3,14 +3,14 @@
 
 <head th:replace="fragments :: head(~{::title})">
     <meta charset="UTF-8">
-    <title>Add Todo</title>
+    <title th:text="#{add_todo}">Add Todo</title>
 </head>
 
 <body class="container">
 
 <!-- Add Bootstrap navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Todo App</a>
+    <a class="navbar-brand" href="#" th:text="#{navbar_app_name}">Todo App</a>
 
     <!-- User photo section -->
     <div class="user-profile">
@@ -21,9 +21,9 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="/todos/add">Add Todo</a>
+                <a class="nav-link" href="/todos/add" th:text="#{add_todo}">Add Todo</a>
             </li>
-            <!-- Add more navbar links as needed -->
+
         </ul>
     </div>
 </nav>
@@ -33,20 +33,20 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h2 class="mt-4 mb-4">Add Todo</h2>
+                    <h2 class="mt-4 mb-4" th:text="#{add_todo}">Add Todo</h2>
                 </div>
                 <div class="card-body">
                     <form action="/todos/add" method="post">
                         <input type="hidden" name="_csrf" th:value="${_csrf.getToken()}">
                         <div class="mb-3">
-                            <label for="title" class="form-label">Title:</label>
+                            <label for="title" class="form-label" th:text="#{title}">Title:</label>
                             <input type="text" id="title" name="title" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label for="priority" class="form-label">Priority:</label>
+                            <label for="priority" class="form-label" th:text="#{priority}">Priority:</label>
                             <input type="text" id="priority" name="priority" class="form-control" required>
                         </div>
-                        <button type="submit" class="btn btn-primary">Add Todo</button>
+                        <button type="submit" class="btn btn-primary" th:text="#{add_todo}">Add Todo</button>
                     </form>
                 </div>
             </div>
