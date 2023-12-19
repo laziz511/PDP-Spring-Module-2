@@ -12,6 +12,7 @@ public final class ColumnConstants {
     public static final String ROLE_ID = "role_id";
     public static final String NAME = "name";
     public static final String ADMIN_ROLE_ID = "adminRoleId";
+    public static final String PROFILE_PHOTO_PATH = "profilePhotoPath";
 
     private ColumnConstants() {
     }

@@ -34,11 +34,13 @@ CREATE TABLE IF NOT EXISTS role_permission
 -- DDL for AuthUser
 CREATE TABLE IF NOT EXISTS auth_user
 (
-    id       SERIAL PRIMARY KEY,
-    username VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    blocked  BOOLEAN      NOT NULL
+    id                 SERIAL PRIMARY KEY,
+    username           VARCHAR(255) NOT NULL,
+    password           VARCHAR(255) NOT NULL,
+    blocked            BOOLEAN      NOT NULL,
+    profile_photo_path VARCHAR(255)
 );
+
 
 -- Many-to-Many relationship table between auth_user and auth_role
 CREATE TABLE IF NOT EXISTS user_role

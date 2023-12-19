@@ -17,4 +17,5 @@ public class AuthUser {
     private String password;
     private List<AuthRole> roles;
     private boolean blocked;
+    private String profilePhotoPath;
 }

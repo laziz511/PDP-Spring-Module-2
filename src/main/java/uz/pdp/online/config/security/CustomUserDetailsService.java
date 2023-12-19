@@ -26,19 +26,27 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AuthUser authUser = authUserRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
         if (authUser.isBlocked()) {
             throw new LockedException("User is blocked");
         }
 
-        Long userID = authUser.getId();
-        List<AuthRole> roles = authRoleRepository.findAllByUserId(userID);
+        fetchUserRolesAndPermissions(authUser);
+
+        return new CustomUserDetails(authUser);
+    }
+
+    private void fetchUserRolesAndPermissions(AuthUser authUser) {
+        Long userId = authUser.getId();
+        List<AuthRole> roles = authRoleRepository.findAllByUserId(userId);
+
         for (AuthRole role : roles) {
             List<AuthPermission> permissions = authPermissionRepository.findAllByRoleId(role.getId());
             role.setPermissions(permissions);
         }
+
         authUser.setRoles(roles);
-        return new CustomUserDetails(authUser);
     }
+
 }

@@ -36,6 +36,7 @@ public class SecurityConfigurer {
             "/fonts/**"
     };
 
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 

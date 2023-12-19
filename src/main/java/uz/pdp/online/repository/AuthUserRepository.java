@@ -32,8 +32,8 @@ public class AuthUserRepository {
             WHERE blocked = false AND id NOT IN (SELECT user_id FROM user_role WHERE role_id = :adminRoleId)
             """;
     private static final String SAVE_SQL = """
-            INSERT INTO auth_user (username, password, blocked)
-             VALUES (:username, :password, :blocked) RETURNING id
+            INSERT INTO auth_user (username, password, blocked, profile_photo_path)
+            VALUES (:username, :password, :blocked, :profilePhotoPath) RETURNING id
             """;
     private static final String UPDATE_SQL = """
             UPDATE auth_user 
@@ -42,7 +42,11 @@ public class AuthUserRepository {
             """;
 
     public AuthUser save(AuthUser user) {
-        SqlParameterSource parameters = new MapSqlParameterSource().addValue(USERNAME, user.getUsername()).addValue(PASSWORD, user.getPassword()).addValue(BLOCKED, user.isBlocked());
+        SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue(USERNAME, user.getUsername())
+                .addValue(PASSWORD, user.getPassword())
+                .addValue(BLOCKED, user.isBlocked())
+                .addValue(PROFILE_PHOTO_PATH, user.getProfilePhotoPath());
 
         Long generatedId = namedParameterJdbcTemplate.queryForObject(SAVE_SQL, parameters, Long.class);
 
@@ -53,6 +57,7 @@ public class AuthUserRepository {
             throw new KeyRetrievalException("Failed to retrieve the generated key after insert");
         }
     }
+
 
     public List<AuthUser> findAll() {
         MapSqlParameterSource parameters = new MapSqlParameterSource();

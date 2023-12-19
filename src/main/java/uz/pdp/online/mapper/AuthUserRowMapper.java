@@ -16,12 +16,14 @@ public class AuthUserRowMapper implements RowMapper<AuthUser> {
         String username = resultSet.getString(USERNAME);
         String password = resultSet.getString(PASSWORD);
         boolean blocked = resultSet.getBoolean(BLOCKED);
+        String profilePhotoPath = resultSet.getString("profile_photo_path");
 
         return AuthUser.builder()
                 .id(id)
                 .username(username)
                 .password(password)
                 .blocked(blocked)
+                .profilePhotoPath(profilePhotoPath)
                 .build();
     }
 }

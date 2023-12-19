@@ -7,7 +7,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import uz.pdp.online.config.security.CustomUserDetails;
 import uz.pdp.online.dto.UserRegisterDTO;
@@ -16,9 +18,14 @@ import uz.pdp.online.model.AuthUser;
 import uz.pdp.online.repository.AuthRoleRepository;
 import uz.pdp.online.repository.AuthUserRepository;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static uz.pdp.online.model.Role.USER;
 
@@ -30,6 +37,8 @@ public class AuthController {
     private final AuthUserRepository authUserRepository;
     private final AuthRoleRepository authRoleRepository;
     private final PasswordEncoder passwordEncoder;
+
+    private final Path rootPath = Path.of("C:\\Users\\Hp\\Desktop\\photos");
 
     @GetMapping("/login")
     public ModelAndView loginPage(@RequestParam(required = false) String error) {
@@ -51,18 +60,36 @@ public class AuthController {
 
     @PostMapping("/register")
     @Transactional
-    public String register(@ModelAttribute UserRegisterDTO dto) {
-        AuthUser authUser = new AuthUser(null, dto.username(), passwordEncoder.encode(dto.password()), Collections.emptyList(), false);
+    public String register(@ModelAttribute UserRegisterDTO dto, @RequestParam("photo") MultipartFile photo) {
+
+        String photoPath = savePhoto(photo);
+
+        AuthUser authUser = AuthUser.builder()
+                .username(dto.username())
+                .password(passwordEncoder.encode(dto.password()))
+                .profilePhotoPath(rootPath.resolve(photoPath).toString())
+                .roles(Collections.emptyList())
+                .blocked(false)
+                .build();
+
         AuthUser savedUser = authUserRepository.save(authUser);
 
         AuthRole userAuthRole = authRoleRepository.findByName(USER);
-
         authRoleRepository.assignRole(savedUser.getId(), userAuthRole.getId());
 
         return "redirect:/auth/login";
     }
 
-
+    private String savePhoto(MultipartFile photo) {
+        String newName = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(photo.getOriginalFilename());
+        Path path = rootPath.resolve(newName);
+        try {
+            Files.copy(photo.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to save user profile photo");
+        }
+        return newName;
+    }
 
     @GetMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
@@ -78,7 +105,6 @@ public class AuthController {
     @PreAuthorize("hasRole('ADMIN')")
     public String blockUser(@PathVariable Long userId,
                             @AuthenticationPrincipal CustomUserDetails adminDetails) {
-        System.out.println("blockUser works");
         Optional<AuthUser> userToBlock = authUserRepository.findById(userId);
         AuthUser user = userToBlock.orElseThrow(() -> new RuntimeException("USER NOT FOUND"));
 

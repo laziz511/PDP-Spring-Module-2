@@ -1,16 +1,18 @@
 package uz.pdp.online.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.online.config.security.CustomUserDetails;
+import uz.pdp.online.model.AuthUser;
 import uz.pdp.online.model.Todo;
-import uz.pdp.online.repository.AuthRoleRepository;
 import uz.pdp.online.repository.TodoRepository;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,14 +26,22 @@ public class TodoController {
 
     @GetMapping("/show")
     public String showTodos(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-        Long userId = userDetails.getAuthUser().getId();
+
+        AuthUser user = userDetails.getAuthUser();
+        Long userId = user.getId();
+
         List<Todo> todos = todoRepository.findByUserId(userId);
         model.addAttribute("todos", todos);
+
+        addProfilePhotoToModel(model, user);
+
         return "todos";
     }
 
     @GetMapping("/add")
-    public String showAddTodoForm() {
+    public String showAddTodoForm(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        AuthUser user = userDetails.getAuthUser();
+        addProfilePhotoToModel(model, user);
         return "addTodo";
     }
 
@@ -49,6 +59,8 @@ public class TodoController {
         Long userId = userDetails.getAuthUser().getId();
         Todo todoToDelete = todoRepository.findByIdAndUserId(id, userId);
         model.addAttribute("todoToDelete", todoToDelete);
+        AuthUser user = userDetails.getAuthUser();
+        addProfilePhotoToModel(model, user);
         return "deleteTodo";
     }
 
@@ -64,6 +76,8 @@ public class TodoController {
         Long userId = userDetails.getAuthUser().getId();
         Todo todoToUpdate = todoRepository.findByIdAndUserId(id, userId);
         model.addAttribute("todoToUpdate", todoToUpdate);
+        AuthUser user = userDetails.getAuthUser();
+        addProfilePhotoToModel(model, user);
         return "updateTodo";
     }
 
@@ -77,5 +91,16 @@ public class TodoController {
             todoRepository.update(todoToUpdate);
         }
         return REDIRECT_TO_HOME_PAGE;
+    }
+
+    private void addProfilePhotoToModel(Model model, AuthUser user) {
+        String photoPath = user.getProfilePhotoPath();
+        try {
+            byte[] photoBytes = Files.readAllBytes(Path.of(photoPath));
+            String base64EncodedPhoto = "data:image/png;base64," + java.util.Base64.getEncoder().encodeToString(photoBytes);
+            model.addAttribute("profilePhoto", base64EncodedPhoto);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
