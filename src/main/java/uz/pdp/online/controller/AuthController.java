@@ -1,5 +1,6 @@
 package uz.pdp.online.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -57,17 +59,31 @@ public class AuthController {
     }
 
     @GetMapping("/register")
-    public String showRegistrationForm() {
-        return "/auth/register";
+    public String showRegistrationForm(Model model) {
+        model.addAttribute("dto", new UserRegisterDTO());
+        return "auth/register";
     }
+
 
     @PostMapping("/register")
     @Transactional
-    public String register(@ModelAttribute UserRegisterDTO dto, @RequestParam("photo") MultipartFile photo) {
+    public String register(@Valid @ModelAttribute("dto") UserRegisterDTO dto,
+                           BindingResult errors,
+                           @RequestParam("photo") MultipartFile photo) {
+
+        if (errors.hasErrors()) {
+            return "auth/register";
+        }
+
+        // Check if username already exists
+        if (authUserRepository.findByUsername(dto.getUsername()).isPresent()) {
+            errors.rejectValue("username", "error.user", "username_error_message_already_exists");
+            return "auth/register";
+        }
 
         String photoPath = savePhoto(photo);
 
-        AuthUser authUser = AuthUser.builder().username(dto.username()).password(passwordEncoder.encode(dto.password())).profilePhotoPath(rootPath.resolve(photoPath).toString()).roles(Collections.emptyList()).blocked(false).build();
+        AuthUser authUser = buildAuthUser(dto, photoPath);
 
         AuthUser savedUser = authUserRepository.save(authUser);
 
@@ -75,6 +91,11 @@ public class AuthController {
         authRoleRepository.assignRole(savedUser.getId(), userAuthRole.getId());
 
         return "redirect:/auth/login";
+    }
+
+
+    private AuthUser buildAuthUser(UserRegisterDTO dto, String photoPath) {
+        return AuthUser.builder().username(dto.getUsername()).password(passwordEncoder.encode(dto.getPassword())).profilePhotoPath(rootPath.resolve(photoPath).toString()).roles(Collections.emptyList()).blocked(false).build();
     }
 
     private String savePhoto(MultipartFile photo) {

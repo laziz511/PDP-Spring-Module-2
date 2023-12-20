@@ -50,3 +50,5 @@ CREATE TABLE IF NOT EXISTS user_role
     PRIMARY KEY (user_id, role_id)
 );
 
+
+insert into user_role(user_id, role_id

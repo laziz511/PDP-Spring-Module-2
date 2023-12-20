@@ -1,11 +1,15 @@
 package uz.pdp.online.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.online.config.security.CustomUserDetails;
+import uz.pdp.online.dto.UserRegisterDTO;
+import uz.pdp.online.exception.TodoNotFoundException;
 import uz.pdp.online.model.AuthUser;
 import uz.pdp.online.model.Todo;
 import uz.pdp.online.repository.TodoRepository;
@@ -24,8 +28,25 @@ public class TodoController {
     private final TodoRepository todoRepository;
     private static final String REDIRECT_TO_HOME_PAGE = "redirect:/todos/show";
 
+    @GetMapping("/{id}")
+    public String showTodo(@PathVariable Long id, Model model,
+                           @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long userId = userDetails.getAuthUser().getId();
+        Todo todo = todoRepository.findByIdAndUserId(id, userId);
+
+        if (todo == null) {
+            throw new TodoNotFoundException("Todo not found with id : '%s'".formatted(id), "/todos/show");
+        }
+
+        model.addAttribute("todo", todo);
+        AuthUser user = userDetails.getAuthUser();
+        addProfilePhotoToModel(model, user);
+        return "todo";
+    }
+
     @GetMapping("/show")
-    public String showTodos(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+    public String showTodos(@AuthenticationPrincipal CustomUserDetails userDetails,
+                            Model model) {
 
         AuthUser user = userDetails.getAuthUser();
         Long userId = user.getId();
@@ -39,23 +60,39 @@ public class TodoController {
     }
 
     @GetMapping("/add")
-    public String showAddTodoForm(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String showAddTodoForm(Model model,
+                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
         AuthUser user = userDetails.getAuthUser();
         addProfilePhotoToModel(model, user);
+        model.addAttribute("dto", new Todo());
         return "addTodo";
     }
 
     @PostMapping("/add")
-    public String addTodo(@RequestParam String title, @RequestParam String priority, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String addTodo(@Valid  @ModelAttribute("dto") Todo dto, BindingResult errors,
+                          @AuthenticationPrincipal CustomUserDetails userDetails,
+                          Model model) {
+
+        if (errors.hasErrors()) {
+            AuthUser user = userDetails.getAuthUser();
+            addProfilePhotoToModel(model, user);
+            return "addTodo";
+        }
+
         LocalDateTime createdAt = LocalDateTime.now();
         Long userId = userDetails.getAuthUser().getId();
-        Todo newTodo = new Todo(null, title, priority, createdAt, userId);
-        todoRepository.save(newTodo);
+        dto.setCreatedAt(createdAt);
+        dto.setUserId(userId);
+        todoRepository.save(dto);
+
         return REDIRECT_TO_HOME_PAGE;
     }
 
+
     @GetMapping("/delete/{id}")
-    public String showDeleteTodoForm(@PathVariable Long id, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String showDeleteTodoForm(@PathVariable Long id,
+                                     Model model,
+                                     @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long userId = userDetails.getAuthUser().getId();
         Todo todoToDelete = todoRepository.findByIdAndUserId(id, userId);
         model.addAttribute("todoToDelete", todoToDelete);
@@ -65,14 +102,17 @@ public class TodoController {
     }
 
     @PostMapping("/delete")
-    public String deleteTodo(@RequestParam Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String deleteTodo(@RequestParam Long id,
+                             @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long userId = userDetails.getAuthUser().getId();
         todoRepository.delete(id, userId);
         return REDIRECT_TO_HOME_PAGE;
     }
 
     @GetMapping("/update/{id}")
-    public String showUpdateTodoForm(@PathVariable Long id, Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String showUpdateTodoForm(@PathVariable Long id,
+                                     Model model,
+                                     @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long userId = userDetails.getAuthUser().getId();
         Todo todoToUpdate = todoRepository.findByIdAndUserId(id, userId);
         model.addAttribute("todoToUpdate", todoToUpdate);
@@ -82,7 +122,10 @@ public class TodoController {
     }
 
     @PostMapping("/update")
-    public String updateTodo(@RequestParam Long id, @RequestParam String title, @RequestParam String priority, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String updateTodo(@RequestParam Long id,
+                             @RequestParam String title,
+                             @RequestParam String priority,
+                             @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long userId = userDetails.getAuthUser().getId();
         Todo todoToUpdate = todoRepository.findByIdAndUserId(id, userId);
         if (todoToUpdate != null) {

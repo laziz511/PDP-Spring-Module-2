@@ -1,6 +1,7 @@
 package uz.pdp.online.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import uz.pdp.online.mapper.TodoRowMapper;
@@ -62,7 +63,11 @@ public class TodoRepository {
         parameters.put(ID, id);
         parameters.put(USER_ID, userId);
 
-        return namedParameterJdbcTemplate.queryForObject(FIND_BY_ID_AND_USER_ID_SQL, parameters, new TodoRowMapper());
+        try {
+            return namedParameterJdbcTemplate.queryForObject(FIND_BY_ID_AND_USER_ID_SQL, parameters, new TodoRowMapper());
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     public void update(Todo todo) {
