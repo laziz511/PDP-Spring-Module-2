@@ -1,9 +1,10 @@
-package uz.pdp.online.model;
+package uz.pdp.online.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import uz.pdp.online.model.City;
 
 import java.util.List;
 
@@ -11,10 +12,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AuthUser {
+public class UserInfoDTO {
     private Long id;
     private String username;
-    private String password;
-    private String role;
-    private List<Subscription> subscriptions;
+    private List<City> subscriptions;
 }

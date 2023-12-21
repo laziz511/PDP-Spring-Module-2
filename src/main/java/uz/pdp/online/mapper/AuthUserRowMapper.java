@@ -6,7 +6,7 @@ import uz.pdp.online.model.AuthUser;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static uz.pdp.online.repository.ColumnConstants.*;
+import static uz.pdp.online.constants.ColumnConstants.*;
 
 public class AuthUserRowMapper implements RowMapper<AuthUser> {
 
@@ -15,15 +15,13 @@ public class AuthUserRowMapper implements RowMapper<AuthUser> {
         Long id = resultSet.getLong(ID);
         String username = resultSet.getString(USERNAME);
         String password = resultSet.getString(PASSWORD);
-        boolean blocked = resultSet.getBoolean(BLOCKED);
-        String profilePhotoPath = resultSet.getString("profile_photo_path");
+        String role = resultSet.getString(ROLE);
 
         return AuthUser.builder()
                 .id(id)
                 .username(username)
                 .password(password)
-                .blocked(blocked)
-                .profilePhotoPath(profilePhotoPath)
+                .role(role)
                 .build();
     }
 }

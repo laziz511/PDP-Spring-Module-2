@@ -1,4 +1,4 @@
-package uz.pdp.online.model;
+package uz.pdp.online.constants;
 
 public final class Role {
     public static final String USER = "USER";

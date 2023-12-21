@@ -50,7 +50,7 @@ public class SecurityConfigurer {
                 .loginPage("/auth/login")
                 .usernameParameter("uname")
                 .passwordParameter("pswd")
-                .defaultSuccessUrl("/todos/show", false)
+                .defaultSuccessUrl("/user/city/show", false)
                 .failureHandler(authenticationFailureHandler);
 
         http.logout()

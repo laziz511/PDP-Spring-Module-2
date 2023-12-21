@@ -5,16 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AuthUser {
+public class Subscription {
     private Long id;
-    private String username;
-    private String password;
-    private String role;
-    private List<Subscription> subscriptions;
+    private Long userId;
+    private Long cityId;
 }

@@ -1,54 +1,32 @@
--- DDL for todos
-CREATE TABLE IF NOT EXISTS todos
+CREATE TABLE auth_user
 (
-    id         SERIAL PRIMARY KEY,
-    title      VARCHAR(255) NOT NULL,
-    priority   VARCHAR(50)  NOT NULL,
-    created_at TIMESTAMP    NOT NULL,
-    user_id    BIGINT REFERENCES auth_user (id)
+    id       SERIAL PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role     VARCHAR(10)
 );
 
 
--- DDL for AuthPermission
-CREATE TABLE IF NOT EXISTS auth_permission
+CREATE TABLE cities
 (
     id   SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
 
--- DDL for AuthRole
-CREATE TABLE IF NOT EXISTS auth_role
+
+CREATE TABLE subscriptions
 (
-    id   SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
+    id      SERIAL PRIMARY KEY,
+    user_id BIGINT,
+    city_id BIGINT
 );
 
--- Junction table for many-to-many relationship between auth_permission and auth_role
-CREATE TABLE IF NOT EXISTS role_permission
+CREATE TABLE weather_data
 (
-    role_id       BIGINT REFERENCES auth_role (id),
-    permission_id BIGINT REFERENCES auth_permission (id),
-    PRIMARY KEY (role_id, permission_id)
+    id          SERIAL PRIMARY KEY,
+    city_id     BIGINT           NOT NULL,
+    day         DATE             NOT NULL,
+    temperature DOUBLE PRECISION NOT NULL,
+    humidity    DOUBLE PRECISION NOT NULL,
+    FOREIGN KEY (city_id) REFERENCES cities (id) ON DELETE CASCADE
 );
-
--- DDL for AuthUser
-CREATE TABLE IF NOT EXISTS auth_user
-(
-    id                 SERIAL PRIMARY KEY,
-    username           VARCHAR(255) NOT NULL,
-    password           VARCHAR(255) NOT NULL,
-    blocked            BOOLEAN      NOT NULL,
-    profile_photo_path VARCHAR(255)
-);
-
-
--- Many-to-Many relationship table between auth_user and auth_role
-CREATE TABLE IF NOT EXISTS user_role
-(
-    user_id BIGINT REFERENCES auth_user (id),
-    role_id BIGINT REFERENCES auth_role (id),
-    PRIMARY KEY (user_id, role_id)
-);
-
-
-insert into user_role(user_id, role_id
