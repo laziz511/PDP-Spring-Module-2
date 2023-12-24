@@ -18,4 +18,5 @@ public class DispatcherInitializer extends AbstractAnnotationConfigDispatcherSer
     protected String[] getServletMappings() {
         return new String[]{"/"};
     }
+
 }

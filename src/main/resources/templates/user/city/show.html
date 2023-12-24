@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head(~{::title})">
+    <meta charset="UTF-8">
+    <title>Cities</title>
+</head>
+
+<body class="container mt-5">
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Show Cities</a>
+    <!-- Navbar links -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/auth/logout}">Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <div class="row justify-content-between mb-3">
+        <div class="col-md-8">
+            <!-- Button to navigate to /weather/show -->
+            <a th:href="@{/user/weather/show}" class="btn btn-primary">Show Weather Forecast</a>
+        </div>
+
+        <div class="col-md-4 text-right">
+            <!-- Button to navigate to /weather/subscribed -->
+            <a th:href="@{/user/weather/subscribed}" class="btn btn-info">Show Subscribed Weather</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header text-center bg-dark text-white">
+            <h2 class="mt-3 mb-4">Cities List</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Subscribe</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="city : ${cities}">
+                    <td th:text="${city.name}"></td>
+                    <td>
+                        <form th:action="@{/user/city/subscribe/{id}(id=${city.id})}" method="post">
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            <button type="submit" class="btn btn-success btn-sm">Subscribe</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Bootstrap JS and Popper.js scripts -->
+<section th:replace="fragments :: js_links"></section>
+</body>
+
+</html>

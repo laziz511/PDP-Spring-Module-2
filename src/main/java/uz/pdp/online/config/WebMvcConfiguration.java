@@ -1,6 +1,6 @@
 package uz.pdp.online.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -22,17 +22,11 @@ import org.thymeleaf.templatemode.TemplateMode;
 @ComponentScan("uz.pdp.online")
 @EnableWebMvc
 @PropertySource("classpath:application.properties")
+@RequiredArgsConstructor
 public class WebMvcConfiguration implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
     private final Environment env;
-
-    @Autowired
-    public WebMvcConfiguration(ApplicationContext applicationContext, Environment env) {
-        this.applicationContext = applicationContext;
-        this.env = env;
-    }
-
 
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
@@ -80,9 +74,9 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         return dataSource;
     }
 
-
     @Bean
     public NamedParameterJdbcTemplate namedParameterJdbcTemplate() {
         return new NamedParameterJdbcTemplate(dataSource());
     }
+
 }

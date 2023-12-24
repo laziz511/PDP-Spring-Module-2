@@ -1,26 +1,19 @@
 package uz.pdp.online.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import uz.pdp.online.config.security.CustomUserDetails;
 import uz.pdp.online.dto.UserRegisterDTO;
-import uz.pdp.online.model.AuthRole;
 import uz.pdp.online.model.AuthUser;
-import uz.pdp.online.repository.AuthRoleRepository;
 import uz.pdp.online.repository.AuthUserRepository;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static uz.pdp.online.model.Role.USER;
+import static uz.pdp.online.constants.Role.USER;
 
 @Controller
 @RequestMapping("/auth")
@@ -28,66 +21,38 @@ import static uz.pdp.online.model.Role.USER;
 public class AuthController {
 
     private final AuthUserRepository authUserRepository;
-    private final AuthRoleRepository authRoleRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @GetMapping("/register")
+    public String showRegistrationForm() {
+        return "auth/register";
+    }
+
+    @PostMapping("/register")
+    @Transactional
+    public String register(UserRegisterDTO dto) {
+        AuthUser authUser = buildAuthUser(dto);
+        authUserRepository.save(authUser);
+        return "redirect:/auth/login";
+    }
 
     @GetMapping("/login")
     public ModelAndView loginPage(@RequestParam(required = false) String error) {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("auth/login");
+        ModelAndView modelAndView = new ModelAndView("auth/login");
         modelAndView.addObject("errorMessage", error);
         return modelAndView;
     }
 
     @GetMapping("/logout")
-    public String logoutPage(Model model) {
+    public String logoutPage() {
         return "auth/logout";
     }
 
-    @GetMapping("/register")
-    public String showRegistrationForm() {
-        return "/auth/register";
+    private AuthUser buildAuthUser(UserRegisterDTO dto) {
+        return AuthUser.builder()
+                .username(dto.username())
+                .password(passwordEncoder.encode(dto.password()))
+                .role(USER)
+                .build();
     }
-
-    @PostMapping("/register")
-    @Transactional
-    public String register(@ModelAttribute UserRegisterDTO dto) {
-        AuthUser authUser = new AuthUser(null, dto.username(), passwordEncoder.encode(dto.password()), Collections.emptyList(), false);
-        AuthUser savedUser = authUserRepository.save(authUser);
-
-        AuthRole userAuthRole = authRoleRepository.findByName(USER);
-
-        authRoleRepository.assignRole(savedUser.getId(), userAuthRole.getId());
-
-        return "redirect:/auth/login";
-    }
-
-
-
-    @GetMapping("/users")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String showAllUsers(Model model,
-                               @AuthenticationPrincipal CustomUserDetails adminDetails) {
-        List<AuthUser> users = authUserRepository.findAll();
-        model.addAttribute("users", users);
-
-        return "userList";
-    }
-
-    @PostMapping("/block/{userId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String blockUser(@PathVariable Long userId,
-                            @AuthenticationPrincipal CustomUserDetails adminDetails) {
-        System.out.println("blockUser works");
-        Optional<AuthUser> userToBlock = authUserRepository.findById(userId);
-        AuthUser user = userToBlock.orElseThrow(() -> new RuntimeException("USER NOT FOUND"));
-
-        if (user != null) {
-            user.setBlocked(true);
-            authUserRepository.update(user);
-        }
-
-        return "redirect:/auth/users";
-    }
-
 }

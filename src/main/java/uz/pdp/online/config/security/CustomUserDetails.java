@@ -3,8 +3,6 @@ package uz.pdp.online.config.security;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import uz.pdp.online.model.AuthPermission;
-import uz.pdp.online.model.AuthRole;
 import uz.pdp.online.model.AuthUser;
 
 import java.util.Collection;
@@ -16,21 +14,12 @@ public record CustomUserDetails(AuthUser authUser) implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();
-        for (AuthRole role : authUser.getRoles()) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
-            for (AuthPermission permission : role.getPermissions()) {
-                authorities.add(new SimpleGrantedAuthority(permission.getName()));
-            }
-        }
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + authUser.getRole()));
         return authorities;
     }
 
     public AuthUser getAuthUser() {
         return authUser;
-    }
-
-    public boolean isBlocked() {
-        return authUser.isBlocked();
     }
 
     @Override
